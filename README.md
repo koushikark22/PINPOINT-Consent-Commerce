@@ -1,4 +1,4 @@
-# PINPOINT — Consent Commerce
+# PINPOINT - Consent Commerce
 
 PINPOINT links creator-signed purchase terms to checkout verification and merchant-authorized PayPal payment controls. It includes two connected browser applications:
 
@@ -56,4 +56,4 @@ See `docs/DEPLOYMENT.md` for the hosting procedure and limitations.
 
 ## License
 
-MIT — see [LICENSE](LICENSE). The project is independent and is not endorsed or operated by PayPal.
+MIT - see [LICENSE](LICENSE). The project is independent and is not endorsed or operated by PayPal.
