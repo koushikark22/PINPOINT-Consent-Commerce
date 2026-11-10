@@ -1,0 +1,38 @@
+# Secrets and environment
+.env
+.env.*
+!.env.example
+*.pem
+*.p12
+*.pfx
+*.key
+*secret*.json
+*credentials*.json
+**/service-account*.json
+
+# Runtime data and logs
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+*.sqlite3
+logs/
+artifacts/
+*.log
+
+# Python and Node
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+node_modules/
+dist/
+build/
+
+# Local and editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
