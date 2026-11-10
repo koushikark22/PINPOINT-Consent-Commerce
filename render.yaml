@@ -1,4 +1,4 @@
-# Public nonpersistent simulation demo. No PayPal payments or durable storage.
+# Public demonstration ONLY: no payments, no durable data. Both services are free tier.
 services:
   - type: web
     name: pinpoint-studio-demo

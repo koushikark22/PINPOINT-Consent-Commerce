@@ -1,31 +1,19 @@
-# Deployment plan
+# Hosting two PINPOINT interfaces
 
-> Not yet a deployable release. Source files and verified production startup commands are pending import.
+The provided `render.yaml` creates two free-tier web services from the same repository. **This configuration is MOCK-only** and is not suitable for real or Sandbox payment processing.
 
-## Target
+1. Import the public repository into [Render](https://dashboard.render.com/), choose **New → Blueprint**.
+2. Select the free plan for both services. Do not upgrade or attach a paid disk.
+3. Set Studio `APP_ORIGIN` to the Market URL (`https://pinpoint-market-demo.onrender.com` or the actual assigned URL).
+4. Set Market `PINPOINT_BACKEND` to the Studio HTTPS URL.
+5. Set Market `PINPOINT_STUDIO_URL` to the Studio HTTPS URL.
+6. Deploy, then visit both assigned URLs. Refresh the Market page after Studio is ready.
+7. Test the mock approval, authorization, signed-policy creation, and blocked checkout. Note that Market does not expose merchant capture/void actions.
 
-Deploy PINPOINT Market and Scenario Studio behind HTTPS endpoints, with the backend reachable only through the intended browser application interfaces.
+## Important limitations
 
-## Required deployment checks
+Render Free services spin down after 15 minutes without traffic and do not retain SQLite filesystem changes across restarts/redeploys. Free services cannot attach persistent disks. The app's policy and payment records may reset, so this is a **nonpersistent public prototype**. A separately engineered persistent datastore plus authorization controls are required for reliable Sandbox deployments. Free Render Postgres expires after 30 days and the current source uses SQLite, so switching databases is not a drop-in environment change.
 
-1. Import the audited Market, Studio, and backend source files.
-2. Supply separate environment variables for PayPal Sandbox and the AI provider. Never commit keys.
-3. Configure a persistent datastore if the application relies on a local SQLite database. Do not use ephemeral disk storage for durable payment state.
-4. Configure allowed origins, HTTPS redirects, signed-policy verification, secure cookies or headers, and least-privilege admin access.
-5. Confirm no endpoint exposes confidential credentials, signing private keys, raw administrative tokens, or arbitrary internal URLs.
-6. Verify PayPal Sandbox authorization, capture, void, rejection handling, webhook verification where applicable, and status read-back.
-7. Verify both websites display consistent payment state, including reloads and multi-session access.
-8. Run the complete test suite and a fresh-install test with documented commands.
-9. Confirm public access and availability for the expected evaluation period.
+The free-tier hours and quotas are shared at workspace level. Some bandwidth/build overages can incur charges if a payment method and applicable spending settings permit them. Monitor your Render workspace billing page; never select a paid plan unintentionally.
 
-## Hosting tradeoffs
-
-Free hosting is not automatically appropriate for transactional state. Some providers suspend idle services or use ephemeral filesystems. A persistent managed datastore or an otherwise verified durable storage strategy is required before claiming reliable availability.
-
-## Public access
-
-Never publish test buyer passwords or confidential API keys in the repository. Provide a public read-only demonstration mode where feasible, and document separately how reviewers can use their own Sandbox credentials for gateway tests.
-
-## Release gate
-
-Do not describe the application as hosted or reproducible until both public URLs, a clean installation, and end-to-end payment outcomes are verified.
+This Blueprint deliberately does **not** configure PayPal or AI secrets. The full integration should be tested in a controlled, secured environment with dedicated test credentials and durable state.

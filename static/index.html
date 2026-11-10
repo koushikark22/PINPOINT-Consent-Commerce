@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#E9EFEC">
+<title>PINPOINT · Creator-signed payment protection</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="/static/style.css?v=6">
+</head>
+<body>
+<!-- Icon sprite: one consistent stroke set instead of OS-dependent unicode glyphs -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 22s-6-5.6-6-11a6 6 0 1 1 12 0c0 5.4-6 11-6 11z"/><circle cx="12" cy="11" r="2.2"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.2 4.2L19 7"/></symbol>
+    <symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol>
+    <symbol id="i-key" viewBox="0 0 24 24"><circle cx="8" cy="15" r="4"/><path d="M11 12l8-8M16 7l2 2M14 9l2 2"/></symbol>
+    <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3l7 3v5c0 5-3.4 8.6-7 10-3.6-1.4-7-5-7-10V6z"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></symbol>
+    <symbol id="i-store" viewBox="0 0 24 24"><path d="M4 9l1.5-5h13L20 9M4 9v11h16V9M4 9h16M9 20v-6h6v6"/></symbol>
+    <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.6"/><path d="M5 20c.8-3.6 3.6-5.5 7-5.5s6.2 1.9 7 5.5"/></symbol>
+    <symbol id="i-play" viewBox="0 0 24 24"><path d="M8 5.5v13l10.5-6.5z"/></symbol>
+    <symbol id="i-alert" viewBox="0 0 24 24"><path d="M12 4l9 16H3zM12 10v4.5M12 17.2v.3"/></symbol>
+    <symbol id="i-pause" viewBox="0 0 24 24"><path d="M9 6v12M15 6v12"/></symbol>
+    <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 4v11M7.5 11l4.5 4.5 4.5-4.5M5 19.5h14"/></symbol>
+    <symbol id="i-gear" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 3v2.5M12 18.5V21M3 12h2.5M18.5 12H21M5.6 5.6l1.8 1.8M16.6 16.6l1.8 1.8M5.6 18.4l1.8-1.8M16.6 7.4l1.8-1.8"/></symbol>
+    <symbol id="i-layers" viewBox="0 0 24 24"><path d="M12 4l8.5 4.5L12 13 3.5 8.5zM3.5 12.5L12 17l8.5-4.5M3.5 16.5L12 21l8.5-4.5"/></symbol>
+    <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M19 8a7.5 7.5 0 1 0 .9 6M19 3.5V8h-4.5"/></symbol>
+    <symbol id="i-scan" viewBox="0 0 24 24"><path d="M4 8V4h4M16 4h4v4M20 16v4h-4M8 20H4v-4M7 12h10"/></symbol>
+    <symbol id="i-minus" viewBox="0 0 24 24"><path d="M6 12h12"/></symbol>
+    <symbol id="i-close" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol>
+    <!-- Guilloche: security-print rosette used only on the signed receipt -->
+    <pattern id="guilloche" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M0 20 Q10 0 20 20 T40 20" fill="none" stroke="currentColor" stroke-width=".5"/>
+      <path d="M0 20 Q10 40 20 20 T40 20" fill="none" stroke="currentColor" stroke-width=".5"/>
+      <path d="M20 0 Q0 10 20 20 T20 40" fill="none" stroke="currentColor" stroke-width=".4"/>
+    </pattern>
+  </defs>
+</svg>
+
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="topbar">
+  <a class="brand" href="#/home" aria-label="PINPOINT home">
+    <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="14.5" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="16" cy="16" r="9" fill="none" stroke="currentColor" stroke-width="1" stroke-dasharray="2 2.4"/><circle cx="16" cy="16" r="3.4" fill="currentColor"/></svg>
+    <span>pinpoint</span>
+  </a>
+  <nav class="primary-nav" aria-label="Product areas">
+    <a href="#/studio" data-view="studio">Scenario Studio</a>
+    <a href="#/creator" data-view="creator">Creator</a>
+    <a href="#/checkout" data-view="checkout">Checkout</a>
+    <a href="#/security" data-view="security">Security Center</a>
+  </nav>
+  <div class="topbar-right">
+    <button class="env-pill" id="envPill" type="button" aria-haspopup="dialog" aria-controls="settingsDialog">
+      <span class="env-dot" aria-hidden="true"></span><span id="envLabel">Connecting…</span>
+    </button>
+    <button class="icon-btn" id="settingsBtn" type="button" aria-label="Environment and settings" aria-controls="settingsDialog">
+      <svg class="ic"><use href="#i-gear"/></svg>
+    </button>
+  </div>
+</header>
+
+<div class="system-banner" id="systemBanner" role="alert" hidden></div>
+
+<main id="main" tabindex="-1">
+
+<!-- ============================== HOME ============================== -->
+<section class="view" id="view-home" data-title="Overview" aria-labelledby="homeTitle">
+  <div class="hero">
+    <div class="hero-copy">
+      <p class="kicker">Payment protection for creator-led commerce</p>
+      <h1 id="homeTitle">Buyers pay only for what the creator actually signed.</h1>
+      <p class="lede">A creator signs the exact payee, product, price ceiling, checkout site and validity window behind their endorsement. PINPOINT checks every checkout against that signature before a PayPal order exists, and holds suspicious orders for the creator’s signed decision before any money is captured.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary btn-lg" id="ctaDemo" href="#/studio?demo=1"><svg class="ic"><use href="#i-play"/></svg>Run the 90-second demo</a>
+        <a class="btn btn-quiet btn-lg" href="#/studio">Browse all scenarios</a>
+      </div>
+      <div class="kit" id="kitStatus" aria-live="polite">
+        <p class="kit-title">Demo kit for this browser</p>
+        <ul class="kit-list" id="kitList"><li class="kit-item is-loading">Preparing signed demo policies…</li></ul>
+      </div>
+    </div>
+    <div class="hero-receipt">
+      <div id="heroReceipt" class="receipt receipt--hero" aria-live="polite">
+        <div class="receipt-skeleton" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+        <p class="sr-only">Loading the signed endorsement…</p>
+      </div>
+      <p class="hero-caption">This is the live policy your browser just signed. The private key never leaves this tab.</p>
+    </div>
+  </div>
+
+  <section class="flow" aria-labelledby="flowTitle">
+    <h2 id="flowTitle">How a payment moves through PINPOINT</h2>
+    <ol class="flow-steps">
+      <li><strong>Creator endorses</strong><span>States the product and price they stand behind.</span></li>
+      <li><strong>Policy is signed</strong><span>Ed25519 signature over payee, SKU, ceiling, site and expiry.</span></li>
+      <li><strong>Buyer checks out</strong><span>The checkout proposes an offer.</span></li>
+      <li><strong>Offer is checked</strong><span>Server compares every pinned field with the signature.</span></li>
+      <li><strong>PayPal authorizes</strong><span>Funds are held, not captured. Risky orders wait.</span></li>
+      <li><strong>Creator decides</strong><span>A signed approve or void for held orders only.</span></li>
+      <li><strong>Outcome is read back</strong><span>Capture or void is confirmed from the gateway, not assumed.</span></li>
+    </ol>
+  </section>
+
+  <section class="boundary" aria-labelledby="boundaryTitle">
+    <h2 id="boundaryTitle">Who decides what</h2>
+    <div class="boundary-grid">
+      <article><svg class="ic ic-lg"><use href="#i-key"/></svg><h3>The signature decides</h3><p>Only the creator-signed policy can authorize a payee, product and price. No model output can widen it.</p></article>
+      <article><svg class="ic ic-lg"><use href="#i-scan"/></svg><h3>AI can only hold</h3><p id="aiBoundary">A configured model can flag a misleading ad and place an order on hold. It can never capture money or prove a deepfake.</p></article>
+      <article><svg class="ic ic-lg"><use href="#i-refresh"/></svg><h3>The gateway confirms</h3><p>Every capture and void is read back from the payment gateway before PINPOINT reports it.</p></article>
+    </div>
+    <p class="scope-note">Out of scope: checkouts that don’t call PINPOINT. Evidence about them is for investigation, not enforcement.</p>
+  </section>
+</section>
+
+<!-- ============================== STUDIO ============================== -->
+<section class="view" id="view-studio" data-title="Scenario Studio" aria-labelledby="studioTitle">
+  <div class="view-head">
+    <div>
+      <h1 id="studioTitle">Scenario Studio</h1>
+      <p class="sub">Each scenario calls the real PINPOINT API. Nothing on this page is animated without a server response behind it.</p>
+    </div>
+    <div class="view-tools">
+      <div class="segmented" role="radiogroup" aria-label="Playback pace">
+        <button type="button" role="radio" aria-checked="true" data-pace="presenter" class="seg">Presenter pace</button>
+        <button type="button" role="radio" aria-checked="false" data-pace="instant" class="seg">Instant</button>
+      </div>
+      <button class="btn btn-ink" id="runSuite" type="button"><svg class="ic"><use href="#i-layers"/></svg>Run every attack</button>
+    </div>
+  </div>
+
+  <div class="studio">
+    <aside class="scenario-rail" aria-label="Scenarios">
+      <div id="scenarioList" class="scenario-list"></div>
+    </aside>
+
+    <div class="stage" id="stage">
+      <div class="run-head">
+        <div class="run-head-text">
+          <p class="run-group" id="runGroup">Baseline</p>
+          <h2 id="runTitle">Legitimate purchase</h2>
+          <p id="runDesc" class="run-desc"></p>
+          <p class="run-expect"><span class="label">Expected</span> <span id="runExpect"></span></p>
+        </div>
+        <div class="run-head-actions">
+          <button class="btn btn-primary btn-lg" id="runScenario" type="button"><svg class="ic"><use href="#i-play"/></svg><span>Run scenario</span></button>
+          <p class="run-note" id="runNote"></p>
+        </div>
+      </div>
+
+      <div class="custom" id="customBuilder" hidden>
+        <form id="customForm" class="custom-grid" novalidate>
+          <label class="field"><span>Scenario name</span><input id="cName" maxlength="120" value="My checkout test"></label>
+          <label class="field"><span>Signed policy to use</span><select id="cPolicy"></select></label>
+          <label class="field"><span>Checkout amount (USD)</span><input id="cAmount" inputmode="decimal" value="4.00"></label>
+          <label class="field"><span>Product SKU</span><input id="cSku" maxlength="150"></label>
+          <label class="field"><span>Checkout site (domain)</span><input id="cDomain" maxlength="255"></label>
+          <label class="field"><span>Payee claimed by checkout</span><input id="cPayee" maxlength="100" placeholder="Leave empty to use the server’s merchant"></label>
+          <label class="field"><span>After checkout</span>
+            <select id="cFlow">
+              <option value="capture">Approve, authorize and capture</option>
+              <option value="authorize">Stop after authorization</option>
+              <option value="hold_void">Hold for creator review, then void (MOCK test hold)</option>
+              <option value="ai">Analyze ad transcript with the configured AI model</option>
+            </select>
+          </label>
+          <label class="field"><span>Content ID (attribution)</span><input id="cContent" maxlength="128" value="custom-ad-001"></label>
+          <label class="field field-wide" id="cTranscriptWrap"><span>Ad transcript (only used for AI analysis)</span><textarea id="cTranscript" rows="2">This preset pack is ninety nine dollars, not four.</textarea></label>
+          <div class="custom-foot field-wide">
+            <p class="predict" id="cPredict" aria-live="polite"></p>
+            <div class="custom-actions">
+              <button class="btn btn-quiet btn-sm" type="button" id="cSave">Save in this browser</button>
+              <button class="btn btn-quiet btn-sm" type="button" id="cLoad">Load saved</button>
+              <button class="btn btn-quiet btn-sm" type="button" id="cReset">Reset to policy</button>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <ol class="timeline" id="timeline" aria-label="Transaction timeline"></ol>
+
+      <div class="result-grid">
+        <div class="receipt" id="receipt" aria-live="polite"></div>
+        <div class="outcome" id="outcome" aria-live="polite" tabindex="-1"></div>
+      </div>
+
+      <div class="suite" id="suite" hidden>
+        <div class="suite-head"><h3>Attack matrix</h3><p id="suiteSummary" aria-live="polite"></p></div>
+        <table class="matrix"><thead><tr><th scope="col">Scenario</th><th scope="col">Expected</th><th scope="col">Server response</th><th scope="col">Result</th></tr></thead><tbody id="suiteBody"></tbody></table>
+      </div>
+
+      <details class="evidence" id="evidencePanel">
+        <summary>Request and response evidence <span class="count" id="evidenceCount"></span></summary>
+        <div class="evidence-tools">
+          <button class="btn btn-quiet btn-sm" type="button" id="exportEvidence"><svg class="ic"><use href="#i-download"/></svg>Download evidence (JSON)</button>
+        </div>
+        <pre class="code" id="evidenceJson">Run a scenario to record its API calls.</pre>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- ============================== CREATOR ============================== -->
+<section class="view" id="view-creator" data-title="Creator" aria-labelledby="creatorTitle">
+  <div class="view-head">
+    <div>
+      <h1 id="creatorTitle">Your endorsements</h1>
+      <p class="sub">Sign the terms you stand behind. Anything outside them is refused at checkout.</p>
+    </div>
+  </div>
+
+  <div class="inbox" id="creatorInbox" aria-live="polite"></div>
+
+  <div class="creator-grid">
+    <div>
+      <h2 class="h-sec">Signed policies</h2>
+      <div class="policy-list" id="creatorPolicies"><p class="empty">Loading policies…</p></div>
+    </div>
+    <form class="panel" id="newPolicyForm" novalidate>
+      <h2 class="h-sec">New endorsement</h2>
+      <label class="field"><span>Creator name</span><input id="npLabel" required maxlength="80" value="Nova Reyes"></label>
+      <label class="field"><span>Product SKU</span><input id="npSku" required maxlength="150" value="NOVA-PRESETS-GOLDEN"></label>
+      <div class="field-row">
+        <label class="field"><span>Highest price (USD)</span><input id="npPrice" inputmode="decimal" required value="4.00"></label>
+        <label class="field"><span>Valid for</span>
+          <select id="npMinutes"><option value="1">1 minute</option><option value="30">30 minutes</option><option value="120" selected>2 hours</option><option value="1440">1 day</option><option value="10080">7 days</option></select>
+        </label>
+      </div>
+      <div class="field-row">
+        <label class="field"><span>Approved checkout site</span><input id="npDomain" readonly aria-describedby="npDomainHint"></label>
+        <label class="field"><span>Time to review held orders</span>
+          <select id="npReview"><option value="30">30 seconds</option><option value="60">1 minute</option><option value="120" selected>2 minutes</option><option value="600">10 minutes</option></select>
+        </label>
+      </div>
+      <p class="hint" id="npDomainHint">Fixed to this server’s origin. The server rejects checkouts from any other site.</p>
+      <label class="field"><span>What you’re endorsing, in your words</span><textarea id="npClaims" rows="3" maxlength="600">I only endorse my Golden Hour preset pack for $4.00 from my verified store.</textarea></label>
+      <button class="btn btn-primary" id="createPolicy" type="submit"><svg class="ic"><use href="#i-key"/></svg>Sign and publish endorsement</button>
+      <p class="hint">Your browser generates an Ed25519 key, signs the policy, and keeps the private key in this tab’s session. This is demo signing, not verified creator identity.</p>
+    </form>
+  </div>
+</section>
+
+<!-- ============================== CHECKOUT ============================== -->
+<section class="view" id="view-checkout" data-title="Checkout" aria-labelledby="checkoutTitle">
+  <div class="view-head">
+    <div>
+      <h1 id="checkoutTitle">Checkout</h1>
+      <p class="sub">What a buyer sees at a participating store. The endorsement badge is computed, not decorative.</p>
+    </div>
+    <label class="field field-inline"><span>Endorsement</span><select id="checkoutPolicy"></select></label>
+  </div>
+
+  <div class="shop">
+    <article class="product" id="productCard"></article>
+
+    <div class="pay-col">
+      <div class="panel order" id="orderPanel">
+        <h2 class="h-sec">Order summary</h2>
+        <dl class="summary" id="orderSummary"></dl>
+        <details class="tamper" id="tamperPanel">
+          <summary>Tamper with this checkout <span class="hint-inline">security test</span></summary>
+          <p class="hint">Change what the checkout sends. The server compares it against the creator’s signature.</p>
+          <div class="field-row">
+            <label class="field"><span>Amount</span><input id="tAmount" inputmode="decimal"></label>
+            <label class="field"><span>SKU</span><input id="tSku"></label>
+          </div>
+          <div class="field-row">
+            <label class="field"><span>Checkout site</span><input id="tDomain"></label>
+            <label class="field"><span>Payee claim</span><input id="tPayee" placeholder="Server merchant"></label>
+          </div>
+          <label class="field"><span>Content ID (which ad sent the buyer)</span><input id="tContent" value="nova-launch-video"></label>
+        </details>
+        <button class="btn btn-pay btn-lg" id="payBtn" type="button">Continue to PayPal</button>
+        <p class="hint" id="payHint"></p>
+      </div>
+
+      <div class="panel tracker" id="tracker" hidden aria-live="polite">
+        <div class="tracker-head"><h2 class="h-sec">Your order</h2><code class="mono" id="trackerId"></code></div>
+        <ol class="tracker-steps" id="trackerSteps"></ol>
+        <div class="tracker-actions" id="trackerActions"></div>
+        <p class="tracker-msg" id="trackerMsg"></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================== SECURITY ============================== -->
+<section class="view" id="view-security" data-title="Security Center" aria-labelledby="secTitle">
+  <div class="view-head">
+    <div>
+      <h1 id="secTitle">Security Center</h1>
+      <p class="sub">Every decision, with the server’s reason and the gateway’s read-back.</p>
+    </div>
+    <button class="btn btn-quiet" id="secRefresh" type="button"><svg class="ic"><use href="#i-refresh"/></svg>Refresh</button>
+  </div>
+
+  <div class="kpis" id="kpis"></div>
+
+  <div class="tabs" role="tablist" aria-label="Security Center sections">
+    <button role="tab" id="tab-tx" aria-controls="pane-tx" aria-selected="true" type="button">Transactions</button>
+    <button role="tab" id="tab-activity" aria-controls="pane-activity" aria-selected="false" tabindex="-1" type="button">Activity</button>
+    <button role="tab" id="tab-review" aria-controls="pane-review" aria-selected="false" tabindex="-1" type="button">Content review</button>
+    <button role="tab" id="tab-tools" aria-controls="pane-tools" aria-selected="false" tabindex="-1" type="button">Evidence tools</button>
+  </div>
+
+  <div class="tabpane" role="tabpanel" id="pane-tx" aria-labelledby="tab-tx">
+    <div class="tx-list" id="txList"></div>
+  </div>
+
+  <div class="tabpane" role="tabpanel" id="pane-activity" aria-labelledby="tab-activity" hidden>
+    <div class="filters" role="group" aria-label="Filter activity">
+      <button class="chip-btn is-on" data-filter="all" type="button">All</button>
+      <button class="chip-btn" data-filter="block" type="button">Blocked</button>
+      <button class="chip-btn" data-filter="payment" type="button">Payments</button>
+      <button class="chip-btn" data-filter="creator" type="button">Creator</button>
+      <button class="chip-btn" data-filter="ai" type="button">AI and review</button>
+    </div>
+    <ol class="feed" id="eventFeed"></ol>
+  </div>
+
+  <div class="tabpane" role="tabpanel" id="pane-review" aria-labelledby="tab-review" hidden>
+    <div class="ai-state" id="aiState"></div>
+    <form class="panel" id="reviewForm" novalidate>
+      <h2 class="h-sec">Analyze the ad behind an order</h2>
+      <div class="field-row">
+        <label class="field"><span>Authorized order</span><select id="rvPayment"></select></label>
+        <label class="field"><span>Content ID</span><input id="rvContent" maxlength="128"></label>
+      </div>
+      <label class="field"><span>Ad transcript</span><textarea id="rvTranscript" rows="3" maxlength="12000">This preset pack costs ninety nine dollars, not four.</textarea></label>
+      <div class="btn-row">
+        <button class="btn btn-primary" id="rvAnalyze" type="submit">Analyze and hold if it contradicts the signed claim</button>
+      </div>
+      <div class="review-result" id="rvResult" aria-live="polite"></div>
+    </form>
+  </div>
+
+  <div class="tabpane" role="tabpanel" id="pane-tools" aria-labelledby="tab-tools" hidden>
+    <div class="tools-grid">
+      <form class="panel" id="claimForm" novalidate>
+        <h2 class="h-sec">Compare an ad with a signed policy</h2>
+        <label class="field"><span>Ad transcript</span><textarea id="clTranscript" rows="3">Grab my Golden Hour presets for $4 from my store.</textarea></label>
+        <label class="field"><span>Signed policy</span><select id="clPolicy"></select></label>
+        <div class="field-row">
+          <label class="field"><span>Observed SKU</span><input id="clSku"></label>
+          <label class="field"><span>Observed price</span><input id="clPrice" value="7.99"></label>
+        </div>
+        <label class="field"><span>Observed merchant name</span><input id="clMerchant" value="Unknown outlet"></label>
+        <div class="btn-row">
+          <button class="btn btn-primary" id="clRun" type="submit">Build evidence report</button>
+          <button class="btn btn-quiet" id="clSave" type="button"><svg class="ic"><use href="#i-download"/></svg>Download report</button>
+        </div>
+        <div id="clResult" class="review-result" aria-live="polite"></div>
+      </form>
+      <form class="panel" id="videoForm" novalidate>
+        <h2 class="h-sec">Compare two videos</h2>
+        <p class="hint">Perceptual hashing by default; CLIP and Whisper only when the server enables local models. Similarity is evidence for a reviewer, never identity proof.</p>
+        <label class="field"><span>Creator’s original (MP4, ≤20 MB)</span><input type="file" id="vOriginal" accept="video/mp4"></label>
+        <label class="field"><span>Suspected copy (MP4, ≤20 MB)</span><input type="file" id="vSuspect" accept="video/mp4"></label>
+        <div class="btn-row">
+          <button class="btn btn-primary" id="vCompare" type="submit">Compare videos</button>
+          <button class="btn btn-quiet" id="vFingerprint" type="button">Fingerprint original only</button>
+        </div>
+        <div id="vResult" class="review-result" aria-live="polite"></div>
+      </form>
+    </div>
+  </div>
+</section>
+</main>
+
+<nav class="bottom-nav" aria-label="Product areas">
+  <a href="#/studio" data-view="studio"><svg class="ic"><use href="#i-play"/></svg><span>Studio</span></a>
+  <a href="#/creator" data-view="creator"><svg class="ic"><use href="#i-user"/></svg><span>Creator</span></a>
+  <a href="#/checkout" data-view="checkout"><svg class="ic"><use href="#i-store"/></svg><span>Checkout</span></a>
+  <a href="#/security" data-view="security"><svg class="ic"><use href="#i-shield"/></svg><span>Security</span></a>
+</nav>
+
+<!-- Payment detail drawer -->
+<dialog class="drawer" id="paymentDrawer" aria-labelledby="drawerTitle">
+  <div class="drawer-head">
+    <h2 id="drawerTitle">Payment</h2>
+    <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#i-close"/></svg></button>
+  </div>
+  <div class="drawer-body" id="drawerBody"></div>
+</dialog>
+
+<!-- Settings / environment -->
+<dialog class="drawer" id="settingsDialog" aria-labelledby="settingsTitle">
+  <div class="drawer-head">
+    <h2 id="settingsTitle">Environment</h2>
+    <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="ic"><use href="#i-close"/></svg></button>
+  </div>
+  <div class="drawer-body">
+    <div id="envDetail" class="env-detail"></div>
+    <form id="tokenForm" class="panel panel-flat" hidden novalidate>
+      <h3>Administrator token</h3>
+      <p class="hint">This server is not in judge mode, so creating policies, settling and reviewing need the demo administrator token. It stays in this page’s memory and is never written to storage.</p>
+      <label class="field"><span>X-Demo-Token</span><input id="adminToken" type="password" autocomplete="off" spellcheck="false"></label>
+      <div class="btn-row"><button class="btn btn-primary" type="submit">Use token</button><button class="btn btn-quiet" type="button" id="tokenClear">Forget token</button></div>
+    </form>
+    <div class="panel panel-flat">
+      <h3>Demo kit</h3>
+      <p class="hint">Re-sign a fresh set of demo policies in this browser. Old policies stay in the audit log.</p>
+      <button class="btn btn-quiet" type="button" id="kitRebuild">Rebuild demo kit</button>
+    </div>
+  </div>
+</dialog>
+
+<div class="toasts" id="toasts" role="status" aria-live="polite"></div>
+
+<script src="/static/app.js?v=6" defer></script>
+</body>
+</html>
