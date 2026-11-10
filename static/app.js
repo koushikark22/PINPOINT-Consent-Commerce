@@ -34,8 +34,8 @@ function h(tag, attrs, ...kids) {
 /** replaceChildren that skips null/false (native replaceChildren would print "null"). */
 const fill = (el, ...kids) => el.replaceChildren(...kids.flat().filter((k) => k !== null && k !== undefined && k !== false));
 const chip = (text, tone, ic) => h('span', { class: 'chip' + (tone ? ' chip--' + tone : '') }, ic ? icon(ic) : null, text);
-const money = (v) => { const n = Number(v); return Number.isFinite(n) ? '$' + n.toFixed(2) : String(v ?? '—'); };
-const short = (s, n = 10) => (s ? (s.length > n * 2 ? s.slice(0, n) + '…' + s.slice(-4) : s) : '—');
+const money = (v) => { const n = Number(v); return Number.isFinite(n) ? '$' + n.toFixed(2) : String(v ?? '-'); };
+const short = (s, n = 10) => (s ? (s.length > n * 2 ? s.slice(0, n) + '…' + s.slice(-4) : s) : '-');
 function parseTime(s) { if (!s) return NaN; let t = String(s).replace(/(\.\d{3})\d+/, '$1'); if (!/(Z|[+-]\d\d:?\d\d)$/.test(t)) t += 'Z'; return Date.parse(t); }
 function clock(ms) { const t = Math.max(0, Math.ceil(ms / 1000)); return Math.floor(t / 60) + ':' + String(t % 60).padStart(2, '0'); }
 function ago(s) {
@@ -44,7 +44,7 @@ function ago(s) {
   if (d < 45) return 'just now'; if (d < 3600) return Math.round(d / 60) + ' min ago';
   if (d < 86400) return Math.round(d / 3600) + ' h ago'; return new Date(t).toLocaleDateString();
 }
-const timeOf = (s) => { const t = parseTime(s); return Number.isFinite(t) ? new Date(t).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '—'; };
+const timeOf = (s) => { const t = parseTime(s); return Number.isFinite(t) ? new Date(t).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '-'; };
 const humanSku = (sku) => String(sku || '').replace(/[-_]+/g, ' ').toLowerCase().replace(/\b\w/g, (c) => c.toUpperCase());
 function download(name, obj) {
   const url = URL.createObjectURL(new Blob([JSON.stringify(obj, null, 2)], { type: 'application/json' }));
@@ -185,7 +185,7 @@ function renderEnv() {
     ['Checkout origin', c.origin],
     ['Authorization', c.judge_mode ? 'Judge mode: no token needed' : state.adminToken ? 'Administrator token in memory' : 'Administrator token required'],
     ['AI model', c.ai_configured ? 'Configured on server' : 'Not configured: no AI verdicts will be shown'],
-    ['Held-order auto-void', (c.review_timeout_seconds ?? '—') + ' s default (each policy signs its own window)'],
+    ['Held-order auto-void', (c.review_timeout_seconds ?? '-') + ' s default (each policy signs its own window)'],
     ['Auto-capture worker', c.auto_settle_seconds >= 5 ? c.auto_settle_seconds + ' s after authorization' : 'Off: capture is explicit'],
   ];
   fill($('envDetail'), 
@@ -335,7 +335,7 @@ async function renderReceipt(box, { policy, attempt, culprit, stamp, sig } = {})
     h('tbody', null, rows.map(([k, label, signed, sent, match]) => h('tr', {
       'data-match': match === null ? null : match ? 'yes' : 'no', 'data-culprit': culprit === k ? 'yes' : null },
     h('td', null, h('span', { class: 'pin-ic' }, icon(match === null ? 'pin' : match ? 'check' : 'x'))),
-    h('td', { class: 'k', text: label }), h('td', { class: 'v', text: signed }), tried ? h('td', { class: 'tried', text: sent ?? '—' }) : null))));
+    h('td', { class: 'k', text: label }), h('td', { class: 'v', text: signed }), tried ? h('td', { class: 'tried', text: sent ?? '-' }) : null))));
   const sigChip = sigState === true ? chip('Signature verified in this browser', 'paid', 'check')
     : sigState === false ? chip('Signature does not verify', 'block', 'x')
     : sigState === 'rejected' ? chip('Impostor signature rejected by server', 'block', 'x')
@@ -702,7 +702,7 @@ async function runScenario(id = state.selected, { auto = false } = {}) {
       held = ar.state === 'HELD_FOR_REVIEW'; holdReason = 'AI_CLAIM_MISMATCH';
       if (!held) {
         tl('decision', 'skip', `Model verdict: ${ar.content_verdict || ar.comparison?.status || 'no mismatch'}`); tl('outcome', 'skip', 'Authorized');
-        return finish(run, { result: 'OBSERVED', headline: 'The model found no contradiction.', why: 'The order stays authorized; the creator isn’t interrupted.', facts: { Verdict: ar.content_verdict || '—', 'Payment ID': created.payment_id } });
+        return finish(run, { result: 'OBSERVED', headline: 'The model found no contradiction.', why: 'The order stays authorized; the creator isn’t interrupted.', facts: { Verdict: ar.content_verdict || '-', 'Payment ID': created.payment_id } });
       }
     }
 
@@ -717,7 +717,7 @@ async function runScenario(id = state.selected, { auto = false } = {}) {
         const st = after?.payment.state || 'HELD_FOR_REVIEW';
         tl('outcome', st === 'VOIDED' ? 'pass' : 'held', st === 'VOIDED' ? 'Auto-voided by the server' : 'Still waiting on the server');
         $('decisionSlot')?.setAttribute('data-done', '');
-        return finish(run, { result: st === 'VOIDED' ? 'PASS' : 'PENDING', headline: st === 'VOIDED' ? 'The creator didn’t answer, so the server voided the order.' : 'The review window passed; the server hasn’t voided yet.', why: 'Unanswered holds are voided by the server’s background worker after the signed review window.', facts: { 'Payment state': st, 'Gateway read-back': after?.paypal_readback?.status || '—' }, paymentId: created.payment_id });
+        return finish(run, { result: st === 'VOIDED' ? 'PASS' : 'PENDING', headline: st === 'VOIDED' ? 'The creator didn’t answer, so the server voided the order.' : 'The review window passed; the server hasn’t voided yet.', why: 'Unanswered holds are voided by the server’s background worker after the signed review window.', facts: { 'Payment state': st, 'Gateway read-back': after?.paypal_readback?.status || '-' }, paymentId: created.payment_id });
       }
       tl('decision', 'run', `Signing ${action === 'VOID' ? 'a void' : 'an approval'} with the creator’s key…`);
       const dr = await submitDecision(run, created.payment_id, policy.id, action, action === 'VOID' ? 'Creator rejected this order: the ad misrepresented the offer' : 'Creator confirmed this order is genuine');
@@ -729,7 +729,7 @@ async function runScenario(id = state.selected, { auto = false } = {}) {
       tl('decision', 'pass', `${action === 'VOID' ? 'Void' : 'Approval'} signed and accepted (state ${dr.data.state})`);
       if (action === 'APPROVE') {
         const rb = must(await rec(run, 'gateway read-back', `/api/payments/${encodeURIComponent(created.payment_id)}`));
-        tl('outcome', dr.data.state === 'CAPTURED' ? 'pass' : 'held', `Gateway reports ${rb.paypal_readback?.status || '—'}`);
+        tl('outcome', dr.data.state === 'CAPTURED' ? 'pass' : 'held', `Gateway reports ${rb.paypal_readback?.status || '-'}`);
         await renderReceipt($('receipt'), { policy, attempt: offer, stamp: dr.data.state === 'CAPTURED' ? { kind: 'paid', text: 'PAID', small: isMock() ? 'simulated gateway' : 'sandbox read-back' } : null });
         return finish(run, { result: s.id === 'cav' ? 'OBSERVED' : 'PASS', headline: 'The creator approved, so the order was captured.', why: 'The scenario expected a void; you chose to approve. That path works too.', facts: { 'Payment state': dr.data.state, 'Gateway read-back': rb.paypal_readback?.status }, paymentId: created.payment_id });
       }
@@ -744,7 +744,7 @@ async function runScenario(id = state.selected, { auto = false } = {}) {
       return finish(run, { result: refused && rbStatus === 'VOIDED' ? 'PASS' : 'FAIL',
         headline: refused ? 'Voided, and the late capture was refused.' : 'The gateway accepted a capture after void.',
         why: refused ? 'The creator’s signed void stands: the gateway refused the capture and still reports the authorization as voided.' : 'Investigate the gateway read-back immediately.',
-        facts: { 'Payment state': dr.data.state, 'Capture attempt': refused ? `refused, HTTP ${probe.http_status}` : 'succeeded', 'Gateway read-back': rbStatus || '—' }, paymentId: created.payment_id });
+        facts: { 'Payment state': dr.data.state, 'Capture attempt': refused ? `refused, HTTP ${probe.http_status}` : 'succeeded', 'Gateway read-back': rbStatus || '-' }, paymentId: created.payment_id });
     }
 
     /* 7. merchant enforcement + read-back */
@@ -754,13 +754,13 @@ async function runScenario(id = state.selected, { auto = false } = {}) {
     const rb = must(await rec(run, 'gateway read-back', `/api/payments/${encodeURIComponent(created.payment_id)}`));
     await pace(500);
     const finalState = st.state, gw = rb.paypal_readback?.status;
-    tl('outcome', finalState === 'CAPTURED' ? 'pass' : 'block', `${finalState}${st.idempotent ? ' (already settled by the server worker)' : ''}; gateway reads ${gw || '—'}`);
+    tl('outcome', finalState === 'CAPTURED' ? 'pass' : 'block', `${finalState}${st.idempotent ? ' (already settled by the server worker)' : ''}; gateway reads ${gw || '-'}`);
     await renderReceipt($('receipt'), { policy, attempt: offer, stamp: finalState === 'CAPTURED' ? { kind: 'paid', text: 'PAID', small: isMock() ? 'simulated gateway' : 'sandbox read-back' } : finalState === 'VOIDED' ? { kind: 'void', text: 'VOID', small: st.reason || '' } : { kind: 'pending', text: 'CHECK', small: finalState } });
     const expectCapture = !custom || custom.prediction.kind === 'pass';
     return finish(run, { result: finalState === 'CAPTURED' && expectCapture ? 'PASS' : 'FAIL',
       headline: finalState === 'CAPTURED' ? 'Paid. The capture matches the signed terms.' : `Ended as ${finalState}.`,
       why: finalState === 'CAPTURED' ? 'Merchant enforcement re-verified the creator’s signature, captured, and the gateway read-back agrees.' : (st.reason || 'See the evidence for the gateway response.'),
-      facts: { Action: st.action || 'already settled', 'Payment state': finalState, 'Gateway read-back': gw || '—', 'PayPal order': created.order_id }, paymentId: created.payment_id });
+      facts: { Action: st.action || 'already settled', 'Payment state': finalState, 'Gateway read-back': gw || '-', 'PayPal order': created.order_id }, paymentId: created.payment_id });
   } catch (e) {
     const msg = e.message || String(e);
     const li = [...$('timeline').querySelectorAll('.tl')].find((x) => ['run', 'wait'].includes(x.dataset.state));
@@ -832,7 +832,7 @@ async function runSuite() {
       if (!run) break;
       results.push(run);
       const resp = run.log.filter((l) => /checkout|probe|activation/.test(l.step)).map((l) => (/probe/.test(l.step)
-        ? `late capture: gateway ${l.response.body?.expected_refusal ? 'refused' : 'ACCEPTED'} (HTTP ${l.response.body?.http_status ?? '—'}), reads ${l.response.body?.authorization_readback?.status || '—'}`
+        ? `late capture: gateway ${l.response.body?.expected_refusal ? 'refused' : 'ACCEPTED'} (HTTP ${l.response.body?.http_status ?? '-'}), reads ${l.response.body?.authorization_readback?.status || '-'}`
         : `${l.step}: HTTP ${l.response.http_status}`)).join('; ') || run.headline;
       row.className = ''; row.replaceChildren(h('td', { text: SCN[id].name }), h('td', { text: SCN[id].expect() }), h('td', { text: resp }),
         h('td', null, run.result === 'PASS' ? chip('Stopped', 'paid', 'check') : run.result === 'SKIPPED' ? chip('Skipped', null) : chip(run.result === 'FAIL' ? 'Not stopped' : run.result, 'block', 'x')));
@@ -1180,10 +1180,10 @@ async function openPayment(id) {
     fill(body, 
       h('div', { class: 'state-path' }, ...path.flatMap((s, i) => [i ? h('span', { class: 'sep', text: '→', 'aria-hidden': 'true' }) : null, stateChip(s)])),
       h('div', { class: 'env-detail' }, h('dl', null, ...[
-        ['Payment', p.id], ['Creator', policy?.payload.creator_label || p.policy_id], ['PayPal order', p.order_id], ['Authorization', p.authorization_id || '—'],
-        ['Payee', p.payee], ['Checkout site', p.domain], ['Attributed ad', p.content_id || '—'],
-        ['Hold reason', p.review_reason === 'SYNTHETIC_MOCK_TEST' ? 'Test hold (MOCK, no AI ran)' : p.review_reason || '—'],
-        ['Gateway read-back', rb ? (rb.status || (rb.readback_error ? 'read-back error' : '—')) : 'No authorization yet'],
+        ['Payment', p.id], ['Creator', policy?.payload.creator_label || p.policy_id], ['PayPal order', p.order_id], ['Authorization', p.authorization_id || '-'],
+        ['Payee', p.payee], ['Checkout site', p.domain], ['Attributed ad', p.content_id || '-'],
+        ['Hold reason', p.review_reason === 'SYNTHETIC_MOCK_TEST' ? 'Test hold (MOCK, no AI ran)' : p.review_reason || '-'],
+        ['Gateway read-back', rb ? (rb.status || (rb.readback_error ? 'read-back error' : '-')) : 'No authorization yet'],
         ['Adapter', isMock() ? 'Simulated gateway (MOCK)' : 'PayPal Sandbox'],
       ].flatMap(([k, v]) => [h('dt', { text: k }), h('dd', { text: String(v) })]))),
       actions,
