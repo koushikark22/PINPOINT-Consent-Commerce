@@ -863,6 +863,15 @@ async function runImpersonation(run, genuine) {
 
 function finish(run, r) {
   Object.assign(run, r, { finished_at: new Date().toISOString() });
+  // Update only from the backend-confirmed payment state already recorded in this run.
+  if (!$('aiAnalysisPanel').hidden && $('aiPanelSource').textContent.includes('LIVE_LLM')) {
+    const finalState = run.facts?.['Payment state'];
+    const stateNode = $('aiPanelBody').querySelector('.ai-panel-state');
+    if (stateNode && typeof finalState === 'string' && finalState) {
+      stateNode.textContent = 'Backend payment state: ' + finalState;
+      stateNode.dataset.state = finalState;
+    }
+  }
   state.results[run.scenario] = run.result === 'PASS' || run.result === 'FAIL' ? run.result : state.results[run.scenario];
   renderOutcome(run);
   $('evidenceJson').textContent = JSON.stringify(run, null, 2);
