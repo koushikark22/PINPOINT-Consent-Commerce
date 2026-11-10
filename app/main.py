@@ -42,6 +42,15 @@ def daily_quota(kind,limit):
         if count>=limit:fail('Public Sandbox judge quota exhausted; reset the isolated test environment tomorrow',429)
         store.event(c,kind,{'daily_count':count+1,'mode':MODE})
 
+
+def public_mock_ai_quota():
+    # Bound public MOCK Gemini requests.
+    if MODE == 'mock' and os.getenv('PUBLIC_MOCK_JUDGE_MODE', '0') == '1':
+        daily_quota(
+            'PUBLIC_MOCK_AI',
+            int(os.getenv('PUBLIC_MOCK_AI_DAILY_LIMIT', '30'))
+        )
+
 def require_admin(token):
     if MODE=='mock' and os.getenv('PUBLIC_MOCK_JUDGE_MODE','0')=='1':return
     if public_judge_enabled():return
@@ -318,6 +327,7 @@ class ContentAnalysis(BaseModel):
 
 @app.post('/api/content/analyze')
 async def analyze_content(data: ContentAnalysis, x_demo_token: str | None = Header(None)):
+    public_mock_ai_quota()
     """Analyze once per content ID; subsequent authorizations inherit the verdict."""
     require_admin(x_demo_token)
     if public_judge_enabled():
@@ -510,12 +520,14 @@ async def settle(payment_id:str,x_demo_token:str|None=Header(None)):
         raise
 
 @app.get('/api/payments')
-def payments():
+def payments(x_demo_token:str|None=Header(None)):
+    if MODE == 'sandbox': require_admin(x_demo_token)
     with store.tx() as c:rows=c.execute('SELECT * FROM payment ORDER BY created_at DESC LIMIT 150').fetchall()
     return [expose_payment(dict(x)) for x in rows]
 
 @app.get('/api/payments/{payment_id}')
-async def payment_detail(payment_id:str):
+async def payment_detail(payment_id:str,x_demo_token:str|None=Header(None)):
+    if MODE == 'sandbox': require_admin(x_demo_token)
     p=get('payment',payment_id)
     observed=None
     if p['authorization_id']:
@@ -535,7 +547,8 @@ async def reconcile(payment_id:str,x_demo_token:str|None=Header(None)):
     return {'state':new,'paypal_readback':a}
 
 @app.get('/api/events')
-def events():
+def events(x_demo_token:str|None=Header(None)):
+    if MODE == 'sandbox': require_admin(x_demo_token)
     with store.tx() as c:rows=c.execute('SELECT * FROM event ORDER BY id DESC LIMIT 200').fetchall()
     return [{**dict(x),'details':json.loads(x['details'])} for x in rows]
 
@@ -548,6 +561,7 @@ class ClaimInput(BaseModel):
 
 @app.post('/api/evidence/claims')
 async def claims(data:ClaimInput):
+    public_mock_ai_quota()
     if public_judge_enabled():daily_quota('PUBLIC_JUDGE_AI',int(os.getenv('SANDBOX_DAILY_AI_LIMIT','30')))
     try:extracted=await ai.extract_claims(data.transcript)
     except Exception as e:raise HTTPException(502,'AI endpoint failed: '+str(e))
