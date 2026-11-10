@@ -3,6 +3,7 @@ from pathlib import Path
 from urllib.parse import urlparse
 from fastapi import FastAPI,HTTPException,Header,UploadFile,File
 from fastapi.responses import FileResponse,JSONResponse
+import httpx
 from pydantic import BaseModel,Field
 from .config import MODE,MERCHANT,ADMIN_TOKEN,ORIGIN
 from . import store,crypto,ai
@@ -334,6 +335,15 @@ async def analyze_content(data: ContentAnalysis, x_demo_token: str | None = Head
     try:
         reference = await ai.extract_claims(payload['claims'])
         extraction = await ai.extract_claims(data.transcript)
+    except httpx.HTTPStatusError as exc:
+        if exc.response.status_code == 429:
+            # Preserve the payment as authorized/unreviewed. Never fabricate an AI verdict.
+            warning = 'Gemini quota or rate limit reached (HTTP 429). Check AI Studio usage and retry after quota permits.'
+            return {'held': False, 'reason': 'AI_UNAVAILABLE', 'warning': warning,
+                    'reference': {'mode': 'UNAVAILABLE', 'reason': warning},
+                    'analysis': {'mode': 'UNAVAILABLE', 'reason': warning},
+                    'content_id': data.content_id}
+        raise HTTPException(502, 'Model analysis failed: upstream HTTP ' + str(exc.response.status_code))
     except Exception as exc:
         raise HTTPException(502, 'Model analysis failed: ' + str(exc))
     if reference.get('mode') != 'LIVE_LLM' or extraction.get('mode') != 'LIVE_LLM':
