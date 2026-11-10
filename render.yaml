@@ -1,0 +1,35 @@
+# Public nonpersistent simulation demo. No PayPal payments or durable storage.
+services:
+  - type: web
+    name: pinpoint-studio-demo
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /api/health
+    envVars:
+      - key: PAYMENT_MODE
+        value: mock
+      - key: PUBLIC_MOCK_JUDGE_MODE
+        value: "1"
+      - key: PUBLIC_SANDBOX_JUDGE_MODE
+        value: "0"
+      - key: DEMO_ADMIN_TOKEN
+        generateValue: true
+      - key: DB_PATH
+        value: /tmp/pinpoint-demo.sqlite3
+      - key: APP_ORIGIN
+        sync: false
+  - type: web
+    name: pinpoint-market-demo
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: python market_site/server.py
+    envVars:
+      - key: PINPOINT_BIND_HOST
+        value: 0.0.0.0
+      - key: PINPOINT_BACKEND
+        sync: false
+      - key: PINPOINT_STUDIO_URL
+        sync: false
