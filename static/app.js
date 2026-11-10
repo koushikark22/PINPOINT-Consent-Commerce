@@ -434,10 +434,56 @@ function selectScenario(id) {
 function resetStage() {
   tlReset(); $('decisionSlot')?.remove();
   const s = SCN[state.selected];
+  showAiAnalysisPanel(s.id === 'ai' || (s.custom && $('cFlow').value === 'ai'));
+  aiAnalysisIdle();
   const policy = s.policy && state.kit.status === 'ready' ? policyById(state.kit[s.policy]) : s.custom ? policyById($('cPolicy').value) : null;
   renderReceipt($('receipt'), { policy });
   $('outcome').removeAttribute('data-result');
   fill($('outcome'), h('p', { class: 'outcome-idle', text: 'Press Run scenario. Each stage lights up only when the server answers.' }));
+}
+
+/* ---------- live Gemini evidence panel ---------- */
+function showAiAnalysisPanel(visible) {
+  const panel = $('aiAnalysisPanel');
+  panel.hidden = !visible;
+  $('timelineAnalysisLayout').classList.toggle('has-ai', visible);
+}
+function aiAnalysisIdle(message = 'Run Misleading ad to display the actual Gemini response.') {
+  $('aiPanelSource').textContent = 'Backend evidence';
+  fill($('aiPanelBody'), h('p', { class: 'ai-panel-empty', text: message }));
+}
+function aiAnalysisLoading() {
+  showAiAnalysisPanel(true);
+  $('aiPanelSource').textContent = 'Request in progress';
+  fill($('aiPanelBody'), h('p', { class: 'ai-panel-empty', text: 'Analyzing creator and advertisement claims using the configured model...' }));
+}
+function renderAiAnalysis(result) {
+  showAiAnalysisPanel(true);
+  const reference = result?.reference || {};
+  const observed = result?.analysis || {};
+  const comparison = result?.comparison || {};
+  const real = reference.mode === 'LIVE_LLM' && observed.mode === 'LIVE_LLM';
+  const status = real ? (comparison.status || result.content_verdict || 'UNKNOWN') : 'UNAVAILABLE';
+  const model = real ? (observed.model || reference.model || 'Configured model') : 'No verified model response';
+  $('aiPanelSource').textContent = real ? model + ' | LIVE_LLM' : 'AI unavailable';
+  const price = (v) => v === null || v === undefined || v === '' || !Number.isFinite(Number(v)) ? 'Not extracted' : money(Number(v));
+  const signedPrice = reference.claims?.price_usd;
+  const adPrice = observed.claims?.price_usd;
+  const reasons = Array.isArray(comparison.reasons) ? comparison.reasons : [];
+  const stateValue = result.state || (result.held ? 'HELD_FOR_REVIEW' : 'No hold reported');
+  fill($('aiPanelBody'),
+    h('div', { class: 'ai-panel-prices' },
+      h('div', { class: 'ai-panel-price' }, h('span', { class: 'label', text: 'Creator signed claim' }), h('strong', { text: real ? price(signedPrice) : 'Unavailable' })),
+      h('div', { class: 'ai-panel-price', 'data-kind': real && status === 'MISMATCH' ? 'ad-mismatch' : 'ad' },
+        h('span', { class: 'label', text: 'Analyzed advertisement' }), h('strong', { text: real ? price(adPrice) : 'Unavailable' }))),
+    h('div', { class: 'ai-panel-verdict', 'data-status': status, text: real ? 'AI comparison: ' + status : 'No live AI verdict' }),
+    real && reasons.length ? h('ul', { class: 'ai-panel-reasons' }, ...reasons.map((reason) => h('li', { text: String(reason) }))) :
+      h('p', { class: 'ai-panel-note', text: real ? 'No contradiction reasons returned.' : String(result.reason || 'The model did not return a verified inference. No mismatch is inferred.') }),
+    real ? h('p', { class: 'ai-panel-meta', text: 'Signed product: ' + (reference.claims?.product || 'not extracted') }) : null,
+    real ? h('p', { class: 'ai-panel-meta', text: 'Advertisement product: ' + (observed.claims?.product || 'not extracted') }) : null,
+    h('p', { class: 'ai-panel-state', text: 'Backend payment state: ' + stateValue }),
+    h('p', { class: 'ai-panel-note', text: 'AI supplies review evidence only. The backend and creator decision determine payment actions. Full API responses remain in Evidence JSON.' })
+  );
 }
 
 /* ---------- timeline ---------- */
@@ -591,6 +637,8 @@ async function runScenario(id = state.selected, { auto = false } = {}) {
   const runBtn = $('runScenario'); runBtn.disabled = true; runBtn.classList.add('is-busy'); $('runSuite').disabled = true;
   const run = newRun(s); state.lastRun = run;
   tlReset(); $('decisionSlot')?.remove();
+  showAiAnalysisPanel(s.id === 'ai' || (s.custom && $('cFlow').value === 'ai'));
+  aiAnalysisIdle('Waiting for authorization before requesting AI analysis.');
   fill($('outcome'), h('p', { class: 'outcome-idle', text: 'Running…' }));
   $('evidenceJson').textContent = JSON.stringify(run, null, 2);
   try {
@@ -694,7 +742,9 @@ async function runScenario(id = state.selected, { auto = false } = {}) {
       requireAdmin();
       tl('decision', 'run', 'Configured AI model compares the ad with the signed claim…');
       const transcript = custom ? custom.transcript : 'Get Nova’s Golden Hour presets now, only ninety nine dollars!';
+      aiAnalysisLoading();
       const ar = must(await rec(run, 'AI content review', `/api/payments/${encodeURIComponent(created.payment_id)}/analyze-review`, { method: 'POST', admin: true, body: { content_id: offer.content_id, transcript } }));
+      renderAiAnalysis(ar);
       if (ar.reason === 'AI_UNAVAILABLE') {
         tl('decision', 'skip', 'Model unavailable: no verdict'); tl('outcome', 'skip', 'Authorized, unreviewed');
         return finish(run, { result: 'OBSERVED', headline: 'No AI verdict was produced.', why: 'The server reported the model as unavailable, so PINPOINT shows nothing it didn’t receive. The order stays authorized.', facts: { 'Payment state': 'AUTHORIZED' } });
