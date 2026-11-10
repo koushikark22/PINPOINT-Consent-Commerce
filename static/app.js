@@ -478,7 +478,7 @@ function renderAiAnalysis(result) {
         h('span', { class: 'label', text: 'Analyzed advertisement' }), h('strong', { text: real ? price(adPrice) : 'Unavailable' }))),
     h('div', { class: 'ai-panel-verdict', 'data-status': status, text: real ? 'AI comparison: ' + status : 'No live AI verdict' }),
     real && reasons.length ? h('ul', { class: 'ai-panel-reasons' }, ...reasons.map((reason) => h('li', { text: String(reason) }))) :
-      h('p', { class: 'ai-panel-note', text: real ? 'No contradiction reasons returned.' : String(result.reason || 'The model did not return a verified inference. No mismatch is inferred.') }),
+      h('p', { class: 'ai-panel-note', text: real ? 'No contradiction reasons returned.' : String(result.warning || observed.reason || reference.reason || 'The model did not return a verified inference. No mismatch is inferred.') }),
     real ? h('p', { class: 'ai-panel-meta', text: 'Signed product: ' + (reference.claims?.product || 'not extracted') }) : null,
     real ? h('p', { class: 'ai-panel-meta', text: 'Advertisement product: ' + (observed.claims?.product || 'not extracted') }) : null,
     h('p', { class: 'ai-panel-state', text: 'Backend payment state: ' + stateValue }),
