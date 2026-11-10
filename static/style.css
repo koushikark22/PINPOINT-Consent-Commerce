@@ -281,6 +281,34 @@ tr[data-culprit="yes"] .k::after{content:"  server reason";font-size:11.5px;font
 .outcome .facts dd{margin:0;font-weight:600;overflow-wrap:anywhere}
 .provenance{display:flex;align-items:center;gap:var(--s2);flex-wrap:wrap;margin-top:var(--s5);padding-top:var(--s4);border-top:1px solid var(--line-2);font-size:13px;color:var(--muted)}
 
+/* Live backend AI evidence, alongside the scenario timeline. */
+.timeline-analysis-layout{min-width:0}
+.timeline-analysis-layout.has-ai{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(280px,.85fr);gap:var(--s5);align-items:start;margin-bottom:var(--s6)}
+.timeline-analysis-layout.has-ai .timeline{grid-template-columns:1fr 1fr;gap:var(--s3);margin-bottom:var(--s4)}
+.timeline-analysis-layout.has-ai .tl{padding:36px 6px 4px 0}
+.timeline-analysis-layout.has-ai .tl::before,.timeline-analysis-layout.has-ai .tl::after{display:none}
+.timeline-analysis-layout.has-ai .decision{grid-template-columns:1fr}
+.ai-analysis-panel[hidden]{display:none}
+.ai-analysis-panel{min-width:0;background:var(--card);border:1px solid var(--line);border-radius:var(--r-panel);padding:var(--s5);box-shadow:var(--shadow)}
+.ai-panel-heading{display:flex;align-items:baseline;justify-content:space-between;gap:var(--s3);padding-bottom:var(--s3);border-bottom:1px solid var(--line-2)}
+.ai-panel-heading h3{font-size:var(--t-md);margin:0}
+.ai-panel-source{font-size:12px;color:var(--muted)}
+.ai-panel-empty,.ai-panel-note{font-size:14px;color:var(--ink-2);margin-top:var(--s3);line-height:1.5}
+.ai-panel-prices{display:grid;grid-template-columns:1fr 1fr;gap:var(--s3);margin-top:var(--s4)}
+.ai-panel-price{padding:var(--s3);border:1px solid var(--line-2);border-radius:var(--r-card);min-width:0}
+.ai-panel-price .label{display:block;font-size:12px;color:var(--muted)}
+.ai-panel-price strong{display:block;font-size:clamp(20px,2vw,29px);letter-spacing:-.03em;margin-top:5px;overflow-wrap:anywhere}
+.ai-panel-price[data-kind="ad-mismatch"] strong{color:var(--void)}
+.ai-panel-verdict{font-weight:700;margin-top:var(--s4);padding:10px 12px;border-radius:var(--r-card);background:var(--paper-2)}
+.ai-panel-verdict[data-status="MISMATCH"]{color:var(--void)}
+.ai-panel-verdict[data-status="CONSISTENT"]{color:var(--paid)}
+.ai-panel-verdict[data-status="UNAVAILABLE"]{color:var(--held)}
+.ai-panel-reasons{font-size:14px;padding-left:var(--s5);margin:var(--s3) 0;line-height:1.5;overflow-wrap:anywhere}
+.ai-panel-meta{font-size:13px;color:var(--muted);margin-top:var(--s3);overflow-wrap:anywhere}
+.ai-panel-state{font-size:13px;font-weight:700;margin-top:var(--s3)}
+@media(max-width:1180px){.timeline-analysis-layout.has-ai{grid-template-columns:1fr}.timeline-analysis-layout.has-ai .timeline{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media(max-width:720px){.timeline-analysis-layout.has-ai .timeline{grid-template-columns:1fr}.timeline-analysis-layout.has-ai .tl{padding:0 0 var(--s3) 42px}.ai-panel-prices{grid-template-columns:1fr 1fr}.ai-analysis-panel{padding:var(--s4)}}
+
 /* creator decision card (appears inside the run) */
 .decision{margin:0 0 var(--s6);border:1.5px solid var(--held);background:linear-gradient(var(--held-wash),var(--card) 70%);border-radius:var(--r-panel);padding:var(--s5) var(--s6);display:grid;grid-template-columns:1fr auto;gap:var(--s4) var(--s6);align-items:center;animation:viewIn .3s var(--ease)}
 .decision h3{font-size:var(--t-md)}
