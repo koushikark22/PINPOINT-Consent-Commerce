@@ -182,7 +182,15 @@
         </form>
       </div>
 
-      <ol class="timeline" id="timeline" aria-label="Transaction timeline"></ol>
+      <div class="timeline-analysis-layout" id="timelineAnalysisLayout">
+        <div class="timeline-main">
+          <ol class="timeline" id="timeline" aria-label="Transaction timeline"></ol>
+        </div>
+        <aside class="ai-analysis-panel" id="aiAnalysisPanel" aria-label="Gemini AI analysis" aria-live="polite" aria-atomic="true" hidden>
+          <div class="ai-panel-heading"><h3>AI Analysis</h3><span class="ai-panel-source" id="aiPanelSource">Gemini result</span></div>
+          <div id="aiPanelBody"><p class="ai-panel-empty">Run Misleading ad to inspect the model response.</p></div>
+        </aside>
+      </div>
 
       <div class="result-grid">
         <div class="receipt" id="receipt" aria-live="polite"></div>
