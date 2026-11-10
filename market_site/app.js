@@ -1,7 +1,7 @@
 'use strict';
 const $=id=>document.getElementById(id);
 let config=null,policies=[],selected=null,currentPayment=null,waiting=false;
-const money=v=>{const n=Number(v);return Number.isFinite(n)?new Intl.NumberFormat('en-US',{style:'currency',currency:'USD'}).format(n):'—'};
+const money=v=>{const n=Number(v);return Number.isFinite(n)?new Intl.NumberFormat('en-US',{style:'currency',currency:'USD'}).format(n):'-'};
 const text=s=>String(s==null?'':s);
 const safe=t=>text(t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 let toastTimer;function toast(message){const el=$('toast');el.textContent=message;el.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('show'),4500)}
