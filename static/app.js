@@ -813,6 +813,10 @@ async function runScenario(id = state.selected, { auto = false } = {}) {
       facts: { Action: st.action || 'already settled', 'Payment state': finalState, 'Gateway read-back': gw || '-', 'PayPal order': created.order_id }, paymentId: created.payment_id });
   } catch (e) {
     const msg = e.message || String(e);
+    if (!$('aiAnalysisPanel').hidden && $('aiPanelSource').textContent === 'Request in progress') {
+      $('aiPanelSource').textContent = 'AI request failed';
+      fill($('aiPanelBody'), h('p', { class: 'ai-panel-empty', text: 'No verified Gemini result was received: ' + msg }));
+    }
     const li = [...$('timeline').querySelectorAll('.tl')].find((x) => ['run', 'wait'].includes(x.dataset.state));
     if (li) tl(li.dataset.k, 'block', msg);
     return finish(run, { result: e instanceof UserError ? 'PENDING' : 'FAIL', headline: e instanceof UserError ? 'Run stopped.' : 'The run hit an error.', why: msg, facts: e.status ? { 'HTTP status': e.status } : {}, gateway: run.paymentId ? undefined : 'none', paymentId: run.paymentId });
